@@ -57,6 +57,7 @@ int num_colunas; // numero de colunas efetivamente usadas
 // CONSTANTES DE ACOES DE MOVIMENTACAO DOS OBJETOS NO JOGO
 #define ESQUERDA           -1  // 'e'
 #define DIREITA             1  // 'd'
+#define PARADO              0  // 'p'
 #define ATIRA               3  // 'l'
 #define BAIXO              -2
 
@@ -216,6 +217,24 @@ int moveCanhao (int direcao, char matriz[][MAXCOLUNA_MAXIMA]) {
                 matriz[num_linhas][posicao+1]=CANHAO;
         }
 
+    }
+    if (direcao==PARADO) {
+        if(posicao==num_colunas){
+            if(matriz[num_linhas][0]==LASER_NAVE){
+                matriz[num_linhas][0]=EXPLOSAO;
+                atingiu=True;
+            }
+            else
+                matriz[num_linhas][0]=CANHAO;
+        }
+        else{
+            if(matriz[num_linhas][posicao+1]==LASER_NAVE){
+                matriz[num_linhas][posicao+1]=EXPLOSAO;
+                atingiu = True;
+            }
+            else
+                matriz[num_linhas][posicao]=CANHAO;
+        }
     }
     return atingiu;
   // ...
@@ -593,7 +612,7 @@ int moveLasersNaves (char matriz[][MAXCOLUNA_MAXIMA], int *lasersAtingidosParam)
         return resultado;
     }
     imprimeMatriz(matriz,numLin,numCol);
-    printf("'e' para esquerda, 'd' para direita e 'l' para emitir laser: \n");
+    printf("'e' para esquerda, 'd' para direita, 'l' para emitir laser e p para pular acao: \n");
     scanf(" %c", &acao);
     if(acao=='l'){
         navesatingidas+=emiteLaserCanhao(matriz,&lasersatingidos);
@@ -630,7 +649,18 @@ int moveLasersNaves (char matriz[][MAXCOLUNA_MAXIMA], int *lasersAtingidosParam)
             return resultado;
         }
     }
-
+    if (acao=='p') {
+        acaocanhao=PARADO;
+        fimDeJogo = moveCanhao(acaocanhao, matriz);
+        if(fimDeJogo == True){
+            resultado= False;
+            *pontosParam = pontos;
+            imprimeMatriz(matriz,numLin,numCol);
+            pontos += (navesatingidas * PONTOS_ACERTOU_NAVE) + (lasersatingidos * PONTOS_ACERTOU_LASER);
+            *pontosParam = pontos;
+            return resultado;
+        }
+    }
 
     fimDeJogo = moveLasersNaves(matriz,&lasersatingidos);
     if(fimDeJogo == True){
