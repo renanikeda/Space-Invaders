@@ -27,7 +27,8 @@
 // !!!!! NAO APAGUE COISA ALGUMA DESSE ESQUELETO !!!!!!
 
 #include <stdio.h>
-
+#include <conio.h>
+#include <Windows.h>
 #define True  1
 #define False 0
 
@@ -613,7 +614,16 @@ int moveLasersNaves (char matriz[][MAXCOLUNA_MAXIMA], int *lasersAtingidosParam)
     }
     imprimeMatriz(matriz,numLin,numCol);
     printf("'e' para esquerda, 'd' para direita, 'l' para emitir laser e p para pular acao: \n");
-    scanf(" %c", &acao);
+    
+    Sleep(750);
+    if ( kbhit() ) {
+        acao = _getch();
+        // do stuff depending on key_code
+    }
+    else {
+        acao = 'p';
+    }
+        
     if(acao=='l'){
         navesatingidas+=emiteLaserCanhao(matriz,&lasersatingidos);
         if(navesatingidas==quantidadeNaves){
